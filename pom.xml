@@ -7,45 +7,129 @@
   <version>1.0-SNAPSHOT</version>
   <name>cake-manager Maven Webapp</name>
   <url>http://maven.apache.org</url>
-  <dependencies>
+      <!-- Spring -->
+      <properties>
+          <springframework.version>4.3.0.RELEASE</springframework.version>
+          <jackson.library>2.8.0</jackson.library>
+      </properties>
 
-      <!-- Servlet -->
-      <dependency>
-          <groupId>javax.servlet</groupId>
-          <artifactId>javax.servlet-api</artifactId>
-          <version>3.1.0</version>
-      </dependency>
+      <dependencies>
+          <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-core</artifactId>
+              <version>${springframework.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-web</artifactId>
+              <version>${springframework.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-webmvc</artifactId>
+              <version>${springframework.version}</version>
+              <exclusions>
+                  <exclusion>
+                      <groupId>commons-logging</groupId>
+                      <artifactId>commons-logging</artifactId>
+                  </exclusion>
+              </exclusions>
+          </dependency>
+          <dependency>
+              <groupId>javax.inject</groupId>
+              <artifactId>javax.inject</artifactId>
+              <version>1</version>
+          </dependency>
 
-      <!-- JSON -->
-      <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-          <version>2.8.0</version>
-      </dependency>
+          <dependency>
+              <groupId>javax.servlet</groupId>
+              <artifactId>javax.servlet-api</artifactId>
+              <version>3.1.0</version>
+          </dependency>
+          <!-- JSON -->
+          <dependency>
+              <groupId>com.fasterxml.jackson.core</groupId>
+              <artifactId>jackson-databind</artifactId>
+              <version>${jackson.library}</version>
+          </dependency>
+          <!-- JPA -->
+          <dependency>
+              <groupId>org.hibernate</groupId>
+              <artifactId>hibernate-entitymanager</artifactId>
+              <version>4.3.6.Final</version>
+          </dependency>
 
-      <!-- JPA -->
-      <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-entitymanager</artifactId>
-          <version>4.3.6.Final</version>
-      </dependency>
+          <!-- In-memory database -->
+          <dependency>
+              <groupId>org.hsqldb</groupId>
+              <artifactId>hsqldb</artifactId>
+              <version>2.3.4</version>
+          </dependency>
 
-      <!-- In-memory database -->
-      <dependency>
-          <groupId>org.hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
-          <version>2.3.4</version>
-      </dependency>
+          <!-- logging -->
+          <dependency>
+              <groupId>org.slf4j</groupId>
+              <artifactId>jcl-over-slf4j</artifactId>
+              <version>1.7.20</version>
+          </dependency>
+          <dependency>
+              <groupId>ch.qos.logback</groupId>
+              <artifactId>logback-classic</artifactId>
+              <version>1.1.7</version>
+          </dependency>
 
-      <!-- Test dependencies. -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.1</version>
-      <scope>test</scope>
-    </dependency>
+          <!-- Test dependencies. -->
+          <dependency>
+              <groupId>junit</groupId>
+              <artifactId>junit</artifactId>
+              <version>4.12</version>
+              <scope>test</scope>
+              <exclusions>
+                  <exclusion>
+                      <groupId>org.hamcrest</groupId>
+                      <artifactId>hamcrest-core</artifactId>
+                  </exclusion>
+              </exclusions>
 
-  </dependencies>
+          </dependency>
+          <dependency>
+              <groupId>org.mockito</groupId>
+              <artifactId>mockito-all</artifactId>
+              <version>1.9.5</version>
+              <exclusions>
+                  <exclusion>
+                      <groupId>org.hamcrest</groupId>
+                      <artifactId>hamcrest-core</artifactId>
+                  </exclusion>
+              </exclusions>
+              <scope>test</scope>
+          </dependency>
+          <!--<dependency>-->
+              <!--<groupId>org.hamcrest</groupId>-->
+              <!--<artifactId>hamcrest-all</artifactId>-->
+              <!--<version>1.3</version>-->
+              <!--<scope>test</scope>-->
+          <!--</dependency>-->
+          <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-test</artifactId>
+              <version>${springframework.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>com.jayway.jsonpath</groupId>
+              <artifactId>json-path</artifactId>
+              <version>1.1.0</version>
+              <scope>test</scope>
+          </dependency>
+          <dependency>
+              <groupId>com.jayway.jsonpath</groupId>
+              <artifactId>json-path-assert</artifactId>
+              <version>1.1.0</version>
+              <scope>test</scope>
+          </dependency>
+      </dependencies>
+
+
   <build>
     <finalName>cake-manager</finalName>
     <plugins>
@@ -63,7 +147,7 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-maven-plugin</artifactId>
             <configuration>
-                <scanIntervalSeconds>10</scanIntervalSeconds>
+                <scanIntervalSeconds>100</scanIntervalSeconds>
                 <stopKey>STOP</stopKey>
                 <stopPort>8005</stopPort>
                 <httpConnector>
