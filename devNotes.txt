@@ -1,7 +1,18 @@
 Developer notes - Arvid Haubold
 
-I decided to change the annotated WebServlet to a Spring MVC configured application with a mixed normal MVC and Rest controller. This was due to the requirements of having a mixed endpoint (not sure if I would do this in an app). I came across some issues in the AngularJS code when retrieving the JSON from the /cakes endpoint after the first POST submit when adding a new record. Strangely enough after the first submit the list displayed fine on every subsequent submit. I therefore created a second REST endpoint /cakeList for the AngularJS client. The /cakes endpoint however still returns the json (when ran from Postman for instance).
+I decided to change the annotated WebServlet to a Spring MVC configured application with a mixed normal MVC and Rest controller.
+This was due to the requirements of having a mixed endpoint (not sure if I would do this in an app).
+I came across some issues in the AngularJS code when retrieving the JSON from the /cakes endpoint after the first
+POST submit when adding a new record. Strangely enough after the first submit the list displayed fine on every subsequent submit.
+I therefore created a second REST endpoint /cakeList for the AngularJS client. The /cakes endpoint however still returns the
+json (when ran from Postman for instance).
 
-I also felt that Spring will give more control for testing and when creating more endpoints or service methods. also I reckon there is no place for html served up by an application if not absolutely necessary.
+I also felt that Spring will give more control for testing and when creating more endpoints or service methods.
+Also I reckon there is no place for html served up by an application if not absolutely necessary.
 
-I renamed the table to reflect the cake entity but left the hibernate sessionfactory in place due to time constraints but would suggest to change that to a pure JPA EntityManager and Repository implementation.
+I renamed the table to reflect the cake entity but left the hibernate sessionfactory in place due to time constraints but
+would suggest to change that to a pure JPA EntityManager and Repository implementation.
+
+One thing I noted was the existing folder structure with a single folder of com.waracle.cakemgr. This caused issues in
+Eclipse but worked in Intellij. I haven't changed the complete structure but any newly created packages seem to
+have been created with the standard com/waracle/cakemgr/.. folder path (as expected).
