@@ -3,24 +3,36 @@ package com.waracle.cakemgr;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import org.hibernate.Session;
-import org.hibernate.exception.ConstraintViolationException;
+import com.waracle.cakemgr.service.CakeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.List;
 
-@WebServlet("/cakes")
-public class CakeServlet extends HttpServlet {
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-    @Override
-    public void init() throws ServletException {
-        super.init();
+@Controller
+public class CakeController {
+
+
+    @Inject
+    CakeService cakeService;
+
+    @PostConstruct
+    public void initialise() throws ServletException {
 
         System.out.println("init started");
 
@@ -56,16 +68,7 @@ public class CakeServlet extends HttpServlet {
                 System.out.println(parser.nextFieldName());
                 cakeEntity.setImage(parser.nextTextValue());
 
-                Session session = HibernateUtil.getSessionFactory().openSession();
-                try {
-                    session.beginTransaction();
-                    session.persist(cakeEntity);
-                    System.out.println("adding cake entity");
-                    session.getTransaction().commit();
-                } catch (ConstraintViolationException ex) {
-
-                }
-                session.close();
+                cakeService.addCake(cakeEntity);
 
                 nextToken = parser.nextToken();
                 System.out.println(nextToken);
@@ -79,27 +82,26 @@ public class CakeServlet extends HttpServlet {
         }
 
         System.out.println("init finished");
+
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @RequestMapping(value={"/cakes", "cakeList"}, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<CakeEntity> getCakes() {
+        System.out.println("Here getting cakes");
+        return cakeService.getCakes();
+    }
 
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        List<CakeEntity> list = session.createCriteria(CakeEntity.class).list();
+    @RequestMapping(value={"/", "/cakes"}, method = GET, produces = MediaType.TEXT_HTML_VALUE)
+    public String getCakePage() {
+        System.out.println("Here in static stuff");
+        return "/static/cakePage";
+    }
 
-        resp.getWriter().println("[");
-
-        for (CakeEntity entity : list) {
-            resp.getWriter().println("\t{");
-
-            resp.getWriter().println("\t\t\"title\" : " + entity.getTitle() + ", ");
-            resp.getWriter().println("\t\t\"desc\" : " + entity.getDescription() + ",");
-            resp.getWriter().println("\t\t\"image\" : " + entity.getImage());
-
-            resp.getWriter().println("\t}");
-        }
-
-        resp.getWriter().println("]");
+    @RequestMapping(value={"/cakes"}, method = POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity addCake(@RequestBody CakeEntity cake) {
+        cakeService.addCake(cake);
+        return new ResponseEntity(HttpStatus.OK);
 
     }
 

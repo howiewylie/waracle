@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>User Management</title>
+    <script
+            src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script type="text/javascript">
+  var app = angular.module('myapp', []);
+
+  app.controller('myappcontroller', function($scope, $http) {
+  $scope.users = []
+  $scope.cakeform = {
+  title : "",
+  description : "",
+  image : ""
+   };
+  getCakes();
+
+  function getCakes() {
+  $http({
+    method : 'GET',
+    url : 'cakeList',
+    headers : {
+    'Content-Type' : 'application/json'
+    }
+   }).then(function successCallback(response) {
+   $scope.cakeList = response.data;
+   }, function errorCallback(response) {
+    console.log(response.statusText);
+   });
+  }
+
+  $scope.addCake = function()
+  {
+    $http({
+    method : 'POST',
+    url : 'cakes',
+    data : angular.toJson($scope.cakeform),
+    headers : {
+    'Content-Type' : 'application/json'
+    }
+
+   }).then(function successCallback(response) {
+   getCakes(),clearForm()
+   }, function errorCallback(response) {
+
+    console.log(response.statusText);
+   });
+  }
+
+  function clearForm() {
+    $scope.cakeform.title = "";
+    $scope.cakeform.description = "";
+    $scope.cakeform.image = "";
+  };
+ });
+</script>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+<body ng-app="myapp" ng-controller="myappcontroller">
+<h3>Adding a cake</h3>
+<form ng-submit="addCake()">
+    <div class="table-responsive">
+        <table class="table table-bordered" style="width: 600px">
+            <tr>
+                <td>Title</td>
+                <td><input type="text" id="title" ng-model="cakeform.title" size="30" /></td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td><input type="text" id="description" ng-model="cakeform.description"
+                           size="30" /></td>
+            </tr>
+            <tr>
+                <td>Image</td>
+                <td><input type="text" id="image" ng-model="cakeform.image"
+                           size="30" /></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit"
+                                       class="btn btn-primary btn-sm"
+                                       value="Create Cake" /></td>
+            </tr>
+        </table>
+    </div>
+</form>
+<h3>Listed Cakes</h3>
+<div class="table-responsive">
+    <table class="table table-bordered" style="width: 600px">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>image</th>
+        </tr>
+
+        <tr ng-repeat="cake in cakeList">
+            <td>{{ cake.title}}</td>
+            <td>{{ cake.description }}</td>
+            <td>{{ cake.image }}</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
